@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VRPTW Solver</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='images/logo_vrptw.png') }}"
+        alt="VRPTW Logo"
+      />
+      <nav>
+        <a href="/">Home</a>
+        <a
+          href="https://or-tools.github.io/docs/pdoc/ortools.html"
+          target="_blank"
+          >OR-Tools Documentation</a
+        >
+        <a href="https://www.openstreetmap.org" target="_blank"
+          >OpenStreetMap</a
+        >
+      </nav>
+    </header>
+    <div id="main-container">
+      <div id="form-container">
+        <h1>Vehicle Routing Problem Solver</h1>
+        <form id="vrp-form">
+          <label for="vehicle_count">Number of Vehicles:</label>
+          <input
+            type="number"
+            id="vehicle_count"
+            name="vehicle_count"
+            value="1"
+            readonly
+          />
+          <label for="vehicle_type">Vehicle Type:</label>
+          <select id="vehicle_type" name="vehicle_type" required>
+            <option value="13.5">Mobil Grandmax Blindvan (13.5 km/l)</option>
+            <option value="11">Mobil Truck Cold Diesel (11 km/l)</option>
+            <option value="58.5">Motor Matic BeAT eSP (58.5 km/l)</option>
+            <option value="62">Motor Supra X 125 FI (62 km/l)</option>
+          </select>
+          <label for="locations">Locations (latitude,longitude):</label>
+          <textarea
+            id="locations"
+            name="locations"
+            rows="10"
+            cols="20"
+            required
+          ></textarea>
+          <label for="demands">Demands:</label>
+          <textarea
+            id="demands"
+            name="demands"
+            rows="10"
+            cols="30"
+            required
+          ></textarea>
+          <button type="submit">Solve VRP</button>
+        </form>
+        <div id="error-message"></div>
+      </div>
+      <div id="map-container">
+        <div id="map" style="height: 500px"></div>
+        <div id="details"></div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      var map = L.map("map").setView([51.505, -0.09], 13);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      document
+        .getElementById("vrp-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var form = e.target;
+          var formData = new FormData(form);
+          var data = {};
+          formData.forEach((value, key) => {
+            if (key === "locations" || key === "demands") {
+              data[key] = value.split("\n").map((item) => item.trim());
+            } else {
+              data[key] = value;
+            }
+          });
+
+          data.locations = data.locations.map((item) =>
+            item.split(",").map(Number)
+          );
+          data.demands = data.demands.map(Number);
+
+          fetch("/solve", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.error) {
+                document.getElementById("error-message").innerText = data.error;
+              } else {
+                var route = data.route;
+                var polyline = L.polyline(route, { color: "blue" }).addTo(map);
+                map.fitBounds(polyline.getBounds());
+              }
+            })
+            .catch((error) => {
+              document.getElementById("error-message").innerText = error;
+            });
+        });
+    </script>
+  </body>
+</html>

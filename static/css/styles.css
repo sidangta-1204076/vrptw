@@ -1,0 +1,190 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+}
+
+header img {
+    height: 40px;
+}
+
+header nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.content h1 {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+.content h3 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.content .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.content .buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+}
+
+.content .buttons button:hover {
+    background-color: #0056b3;
+}
+
+.bio-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.bio-left, .bio-right {
+    width: 45%;
+    padding: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: #c0c0c0;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+#form-container {
+    width: 40%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    box-sizing: border-box;
+}
+
+#form-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+#form-container form label,
+#form-container form input,
+#form-container form textarea,
+#form-container form button,
+#form-container form select {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+#form-container form input,
+#form-container form textarea,
+#form-container form select {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+#form-container form button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#form-container form button:hover {
+    background-color: #0056b3;
+}
+
+#map-container {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+
+#map {
+    flex: 1;
+    height: 70%;
+}
+
+#details {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#details table,
+#details th,
+#details td {
+    border: 1px solid black;
+}
+
+#details th,
+#details td {
+    padding: 8px;
+    text-align: left;
+}
+
+#error-message {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}

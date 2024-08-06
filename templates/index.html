@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VRPTW App</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='images/logo_vrptw.png') }}"
+        alt="VRPTW Logo"
+      />
+      <nav>
+        <a
+          href="https://or-tools.github.io/docs/pdoc/ortools.html"
+          target="_blank"
+          >OR-Tools Documentation</a
+        >
+        <a href="https://www.openstreetmap.org" target="_blank"
+          >OpenStreetMap</a
+        >
+      </nav>
+    </header>
+    <div class="content">
+      <h1>Welcome</h1>
+      <p>
+        OPTIMIZATION OF VEHICLE ROUTE PROBLEMS WITH TIME WINDOWS IN PICKUP AND
+        DELIVERY HANDLING USING GOOGLE OR-TOOLS
+      </p>
+      <div class="buttons">
+        <button class="about-btn" onclick="location.href='/about'">
+          About Me
+        </button>
+        <button class="solve-btn" onclick="location.href='/solve'">
+          Solve Now
+        </button>
+      </div>
+      <div id="map" style="height: 600px; width: 100%"></div>
+    </div>
+    <footer>
+      <p>VRPTW App 1204076 Final Report ©2024</p>
+    </footer>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      var map = L.map("map").setView([51.505, -0.09], 13);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      var marker = L.marker([51.5, -0.09])
+        .addTo(map)
+        .bindPopup("A pretty CSS3 popup.<br> Easily customizable.")
+        .openPopup();
+    </script>
+  </body>
+</html>

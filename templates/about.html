@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Me</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <img
+        src="{{ url_for('static', filename='images/logo_vrptw.png') }}"
+        alt="VRPTW Logo"
+      />
+      <nav>
+        <a href="/">Home</a>
+        <a
+          href="https://or-tools.github.io/docs/pdoc/ortools.html"
+          target="_blank"
+          >OR-Tools Documentation</a
+        >
+        <a
+          href="https://developers.google.com/maps/documentation"
+          target="_blank"
+          >Google Maps API Documentation</a
+        >
+      </nav>
+    </header>
+    <div class="content">
+      <h1>About Me</h1>
+      <h2>Abstract</h2>
+      <p>
+        Optimasi routing kendaraan merupakan masalah yang kompleks dan penting
+        dalam industri logistik untuk meningkatkan efisiensi operasional. Salah
+        satu varian yang signifikan adalah Vehicle Routing Problem with Time
+        windows (VRPTW), di mana setiap kendaraan harus melayani sejumlah
+        pelanggan dalam jendela waktu tertentu dengan memperhatikan kapasitas
+        maksimum kendaraan. Penelitian ini bertujuan mengoptimalkan rute
+        kendaraan dengan mempertimbangkan jendela waktu (time windowss)
+        menggunakan Google OR-Tools dan Google Maps API. VRPTW (Vehicle Routing
+        Problem with Time windows) adalah varian dari VRP yang memerlukan
+        kendaraan tiba di setiap lokasi dalam rentang waktu tertentu. Sistem
+        dikembangkan dengan Python, memanfaatkan Google OR-Tools untuk pemodelan
+        dan penyelesaian masalah optimasi, serta Google Maps API untuk
+        memperoleh data jarak dan waktu tempuh. Pengguna memasukkan lokasi,
+        jendela waktu, dan permintaan, yang kemudian diolah untuk menghasilkan
+        matriks jarak dan waktu diselesaikan menggunakan OR-Tools, menghasilkan
+        rute optimal yang mempertimbangkan kendala kapasitas dan waktu. Hasil
+        menunjukkan pendekatan ini efektif mengurangi jarak tempuh dan waktu
+        perjalanan, serta meningkatkan efisiensi operasional. Sistem ini juga
+        menyediakan visualisasi rute dalam peta interaktif, memudahkan pengguna
+        memahami hasil optimasi. Penelitian ini memberikan kontribusi signifikan
+        dalam optimasi logistik, khususnya pengiriman barang dengan batasan
+        waktu, serta meningkatkan akurasi dan efisiensi pengiriman.
+      </p>
+      <p>
+        <strong>University :</strong> Universitas Logistik & Bisnis
+        Internasional
+      </p>
+      <div class="bio-container">
+        <div class="bio-left">
+          <h2>Biodata Penulis</h2>
+          <img
+            src="{{ url_for('static', filename='images/profile.jpg') }}"
+            alt="Author's photo"
+            style="
+              width: 150px;
+              height: 150px;
+              border-radius: 50%;
+              margin-bottom: 20px;
+            "
+          />
+          <p><strong>Name :</strong> Rifqi Fathurrohman</p>
+          <p><strong>NPM :</strong> 1204076</p>
+          <p><strong>Email :</strong> 1204076@std.ulbi.ac.id</p>
+        </div>
+        <div class="bio-right">
+          <h2>Biodata Pembimbing</h2>
+          <img
+            src="{{ url_for('static', filename='images/supervisor.jpg') }}"
+            alt="Supervisor's photo"
+            style="
+              width: 150px;
+              height: 150px;
+              border-radius: 50%;
+              margin-bottom: 20px;
+            "
+          />
+          <p><strong>Name :</strong> Cahyo Prianto, S.Pd., M.T.,CDSP, SFPC</p>
+          <p><strong>NIK :</strong> 117.84.222</p>
+          <p><strong>Email :</strong> cahyo@ulbi.ac.id</p>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>VRPTW App ©2024</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
