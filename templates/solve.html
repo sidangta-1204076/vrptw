@@ -76,20 +76,23 @@
       </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/script.js') }}"></script> -->
     <script>
-      var map = L.map("map").setView([51.505, -0.09], 13);
+      var jos = L.map("map").setView(
+        [-6.877339723542112, 107.57650073777269],
+        13
+      );
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-      }).addTo(map);
+      }).addTo(jos);
 
       document
         .getElementById("vrp-form")
         .addEventListener("submit", function (e) {
           e.preventDefault();
           var form = e.target;
-          var formData = new FormData(form);
+          const formData = new FormData(form);
           var data = {};
           formData.forEach((value, key) => {
             if (key === "locations" || key === "demands") {
@@ -104,6 +107,8 @@
           );
           data.demands = data.demands.map(Number);
 
+          console.log(data); // Debug: Lihat data yang dikirim
+
           fetch("/solve", {
             method: "POST",
             headers: {
@@ -113,12 +118,46 @@
           })
             .then((response) => response.json())
             .then((data) => {
+              console.log(data); // Debug: Lihat data yang diterima dari server
               if (data.error) {
                 document.getElementById("error-message").innerText = data.error;
               } else {
                 var route = data.route;
-                var polyline = L.polyline(route, { color: "blue" }).addTo(map);
-                map.fitBounds(polyline.getBounds());
+
+                // Clear existing markers and polylines
+                jos.eachLayer((layer) => {
+                  if (
+                    layer instanceof L.Marker ||
+                    layer instanceof L.Polyline
+                  ) {
+                    jos.removeLayer(layer);
+                  }
+                });
+
+                // Add markers for each location with labels
+                var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                if (data.locations) {
+                  data.locations.forEach((loc, index) => {
+                    L.marker([loc[0], loc[1]])
+                      .bindTooltip(labels[index], {
+                        permanent: true,
+                        direction: "right",
+                      })
+                      .addTo(jos);
+                  });
+                } else {
+                  console.error("No locations data received");
+                }
+
+                // Add the route polyline
+                if (route) {
+                  var polyline = L.polyline(route, { color: "blue" }).addTo(
+                    jos
+                  );
+                  jos.fitBounds(polyline.getBounds());
+                } else {
+                  console.error("No route data received");
+                }
               }
             })
             .catch((error) => {

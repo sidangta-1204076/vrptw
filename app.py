@@ -1,10 +1,10 @@
 from flask import Flask, request, render_template, jsonify
 import pandas as pd
 import numpy as np
+import requests
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 import osmnx as ox
 import networkx as nx
-import time
 
 app = Flask(__name__)
 
@@ -39,18 +39,12 @@ def solve_page():
         # Convert locations to DataFrame
         df = pd.DataFrame(locations, columns=['latitude', 'longitude'])
 
-        # Define initial coordinates and labels
-        nodes_coordinates = {
-            'A': (-6.919792, 107.606014),
-        }
+        # Convert coordinates to dictionary for compute_distance_matrix function
+        nodes_coordinates = {str(i): (lat, lon) for i, (lat, lon) in enumerate(locations)}
 
-        node_labels = {
-            'A': 'Depot',
-        }
-
-        center_lat = -6.919792
-        center_lng = 107.606014
-        max_distance_km = 1.017
+        center_lat = locations[0][0]
+        center_lng = locations[0][1]
+        max_distance_km = 5  # Set a reasonable distance for bounding box
 
         # Compute the distance and time matrices using OpenStreetMap
         distance_matrix, time_matrix, nodes = compute_distance_matrix(center_lat, center_lng, max_distance_km, nodes_coordinates)
@@ -80,10 +74,26 @@ def solve_page():
         # Get routes and details
         routes, route_details = get_routes_and_details(manager, routing, solution, vehicle_count, distance_matrix, time_matrix, vehicle_type)
 
-        # Format route for the map
-        formatted_route = [[df.iloc[node]['latitude'], df.iloc[node]['longitude']] for node in routes[0]]
+        # Format route for the map using OSRM
+        formatted_route = get_osrm_route(locations)
 
         return jsonify({'route': formatted_route})
+
+def get_osrm_route(locations):
+    # OSRM request for route
+    osrm_url = 'http://router.project-osrm.org/route/v1/driving/'
+    coordinates = ';'.join([f"{lon},{lat}" for lat, lon in locations])
+    osrm_request = f"{osrm_url}{coordinates}?overview=full&geometries=geojson"
+
+    response = requests.get(osrm_request)
+    if response.status_code != 200:
+        return jsonify({'error': 'OSRM request failed'}), 500
+    
+    osrm_data = response.json()
+    route = osrm_data['routes'][0]['geometry']['coordinates']
+
+    formatted_route = [[lat, lon] for lon, lat in route]  # Swap coordinates for Leaflet
+    return formatted_route
 
 def compute_distance_matrix(center_lat, center_lng, max_distance_km, nodes_coordinates):
     # Define the bounding box coordinates based on center and max distance
