@@ -107,7 +107,7 @@
           );
           data.demands = data.demands.map(Number);
 
-          console.log(data); // Debug: Lihat data yang dikirim
+          console.log("Sending data:", data); // Debugging line
 
           fetch("/solve", {
             method: "POST",
@@ -118,11 +118,12 @@
           })
             .then((response) => response.json())
             .then((data) => {
-              console.log(data); // Debug: Lihat data yang diterima dari server
+              console.log("Received data:", data); // Debugging line
               if (data.error) {
                 document.getElementById("error-message").innerText = data.error;
               } else {
                 var route = data.route;
+                var locations = data.locations;
 
                 // Clear existing markers and polylines
                 jos.eachLayer((layer) => {
@@ -136,8 +137,8 @@
 
                 // Add markers for each location with labels
                 var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                if (data.locations) {
-                  data.locations.forEach((loc, index) => {
+                if (locations) {
+                  locations.forEach((loc, index) => {
                     L.marker([loc[0], loc[1]])
                       .bindTooltip(labels[index], {
                         permanent: true,

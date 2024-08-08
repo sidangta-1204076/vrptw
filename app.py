@@ -25,6 +25,7 @@ def solve_page():
             return jsonify({'error': 'Content-Type must be application/json'}), 415
         
         data = request.get_json()
+        print("Received data:", data)  # Debugging line
         locations = data['locations']
         demands = data['demands']
         vehicle_count = 1
@@ -76,8 +77,9 @@ def solve_page():
 
         # Format route for the map using OSRM
         formatted_route = get_osrm_route(locations)
+        print("Formatted route:", formatted_route)  # Debugging line
 
-        return jsonify({'route': formatted_route})
+        return jsonify({'route': formatted_route, 'locations': locations})
 
 def get_osrm_route(locations):
     # OSRM request for route
@@ -87,11 +89,11 @@ def get_osrm_route(locations):
 
     response = requests.get(osrm_request)
     if response.status_code != 200:
+        print("OSRM request failed with status code:", response.status_code)  # Debugging line
         return jsonify({'error': 'OSRM request failed'}), 500
     
     osrm_data = response.json()
     route = osrm_data['routes'][0]['geometry']['coordinates']
-
     formatted_route = [[lat, lon] for lon, lat in route]  # Swap coordinates for Leaflet
     return formatted_route
 
