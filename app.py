@@ -43,12 +43,8 @@ def solve_page():
         # Convert coordinates to dictionary for compute_distance_matrix function
         nodes_coordinates = {str(i): (lat, lon) for i, (lat, lon) in enumerate(locations)}
 
-        center_lat = locations[0][0]
-        center_lng = locations[0][1]
-        max_distance_km = 5  # Set a reasonable distance for bounding box
-
-        # Compute the distance and time matrices using OpenStreetMap
-        distance_matrix, time_matrix, nodes = compute_distance_matrix(center_lat, center_lng, max_distance_km, nodes_coordinates)
+        # Compute the distance and time matrices using OSRM
+        distance_matrix, time_matrix = compute_distance_matrix_osrm(locations)
 
         # Create the routing index manager
         manager = pywrapcp.RoutingIndexManager(len(distance_matrix), vehicle_count, depot)
@@ -73,13 +69,37 @@ def solve_page():
         solution = routing.SolveWithParameters(search_parameters)
 
         # Get routes and details
-        routes, route_details = get_routes_and_details(manager, routing, solution, vehicle_count, distance_matrix, time_matrix, vehicle_type)
+        routes, route_details, total_distance, total_duration, total_fuel_consumption = get_routes_and_details(
+            manager, routing, solution, vehicle_count, distance_matrix, time_matrix, vehicle_type)
 
         # Format route for the map using OSRM
         formatted_route = get_osrm_route(locations)
         print("Formatted route:", formatted_route)  # Debugging line
 
-        return jsonify({'route': formatted_route, 'locations': locations})
+        return jsonify({
+            'route': formatted_route,
+            'locations': locations,
+            'route_details': route_details,
+            'total_distance': total_distance,
+            'total_duration': total_duration,
+            'total_fuel_consumption': total_fuel_consumption
+        })
+
+def compute_distance_matrix_osrm(locations):
+    osrm_url = 'http://router.project-osrm.org/table/v1/driving/'
+    coordinates = ';'.join([f"{lon},{lat}" for lat, lon in locations])
+    osrm_request = f"{osrm_url}{coordinates}?annotations=distance,duration"
+
+    response = requests.get(osrm_request)
+    if response.status_code != 200:
+        print("OSRM request failed with status code:", response.status_code)  # Debugging line
+        return jsonify({'error': 'OSRM request failed'}), 500
+
+    osrm_data = response.json()
+    distance_matrix = osrm_data['distances']
+    duration_matrix = osrm_data['durations']
+    
+    return np.array(distance_matrix), np.array(duration_matrix)
 
 def get_osrm_route(locations):
     # OSRM request for route
@@ -97,37 +117,15 @@ def get_osrm_route(locations):
     formatted_route = [[lat, lon] for lon, lat in route]  # Swap coordinates for Leaflet
     return formatted_route
 
-def compute_distance_matrix(center_lat, center_lng, max_distance_km, nodes_coordinates):
-    # Define the bounding box coordinates based on center and max distance
-    bbox = ox.utils_geo.bbox_from_point((center_lat, center_lng), dist=max_distance_km*1000)
-    
-    # Create the graph from the bounding box using the older bbox parameters
-    G = ox.graph_from_bbox(bbox[0], bbox[1], bbox[2], bbox[3], network_type='drive')
-    
-    # Convert nodes_coordinates to DataFrame
-    df = pd.DataFrame(nodes_coordinates).T.rename(columns={0: 'latitude', 1: 'longitude'})
-    
-    # Find nearest nodes in the graph
-    nodes = ox.distance.nearest_nodes(G, df['longitude'], df['latitude'])
-    
-    distance_matrix = np.zeros((len(nodes), len(nodes)))
-    time_matrix = np.zeros((len(nodes), len(nodes)))
-
-    for i, node1 in enumerate(nodes):
-        for j, node2 in enumerate(nodes):
-            if i != j:
-                length = nx.shortest_path_length(G, node1, node2, weight='length')
-                distance_matrix[i][j] = length
-                time_matrix[i][j] = length / 50 * 60  # Assuming average speed of 50 km/h
-
-    return distance_matrix, time_matrix, nodes
-
 def index_to_label(index):
     return chr(ord('A') + index)
 
 def get_routes_and_details(manager, routing, solution, vehicle_count, distance_matrix, time_matrix, vehicle_type):
     routes = []
     route_details = []
+    total_distance = 0
+    total_duration = 0
+    total_fuel_consumption = 0
     for vehicle_id in range(vehicle_count):
         index = routing.Start(vehicle_id)
         route = []
@@ -157,7 +155,11 @@ def get_routes_and_details(manager, routing, solution, vehicle_count, distance_m
                     'duration': duration,
                     'fuel_consumption': fuel_consumption
                 })
-    return routes, route_details
+                total_distance += distance
+                total_duration += duration
+                total_fuel_consumption += fuel_consumption
+
+    return routes, route_details, total_distance, total_duration, total_fuel_consumption
 
 if __name__ == '__main__':
     app.run(debug=True)

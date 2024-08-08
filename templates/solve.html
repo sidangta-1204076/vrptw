@@ -124,6 +124,10 @@
               } else {
                 var route = data.route;
                 var locations = data.locations;
+                var routeDetails = data.route_details;
+                var totalDistance = data.total_distance;
+                var totalDuration = data.total_duration;
+                var totalFuelConsumption = data.total_fuel_consumption;
 
                 // Clear existing markers and polylines
                 jos.eachLayer((layer) => {
@@ -159,12 +163,49 @@
                 } else {
                   console.error("No route data received");
                 }
+
+                // Display route details
+                var detailsDiv = document.getElementById("details");
+                detailsDiv.innerHTML = "<h2>Route Details</h2>";
+                if (routeDetails && routeDetails.length > 0) {
+                  var detailsList = "<ul>";
+                  routeDetails.forEach((detail) => {
+                    detailsList += `<li>From ${detail.from} to ${detail.to}: 
+                    ${detail.distance.toFixed(2)} km, 
+                    ${convertMinutesToHoursAndMinutes(detail.duration)}, 
+                    ${detail.fuel_consumption.toFixed(2)} liters</li>`;
+                  });
+                  detailsList += "</ul>";
+                  detailsList += `<h2>Total</h2>`;
+                  detailsList += `<h3>Total Distance: ${totalDistance.toFixed(
+                    2
+                  )} km</h3>`;
+                  detailsList += `<h3>Total Duration: ${convertMinutesToHoursAndMinutes(
+                    totalDuration
+                  )}</h3>`;
+                  detailsList += `<h3>Total Fuel Consumh3tion: ${totalFuelConsumption.toFixed(
+                    2
+                  )} liters</p>`;
+                  detailsDiv.innerHTML += detailsList;
+                } else {
+                  detailsDiv.innerHTML += "<p>No route details available.</p>";
+                }
               }
             })
             .catch((error) => {
               document.getElementById("error-message").innerText = error;
             });
         });
+
+      function convertMinutesToHoursAndMinutes(minutes) {
+        if (minutes < 60) {
+          return `${minutes.toFixed(2)} minute(s)`;
+        }
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = Math.floor(minutes % 60);
+        const seconds = Math.floor((minutes * 60) % 60);
+        return `${hours} hour(s) ${remainingMinutes} minute(s) ${seconds} second(s)`;
+      }
     </script>
   </body>
 </html>
