@@ -39,9 +39,14 @@ def solve_page():
 
         # Convert locations to DataFrame
         df = pd.DataFrame(locations, columns=['latitude', 'longitude'])
+        print("DataFrame:", df)  # Debugging line
 
         # Convert coordinates to dictionary for compute_distance_matrix function
-        nodes_coordinates = {str(i): (lat, lon) for i, (lat, lon) in enumerate(locations)}
+        try:
+            nodes_coordinates = {str(i): (lat, lon) for i, (lat, lon) in enumerate(locations)}
+        except ValueError as e:
+            print("Error processing locations:", e)  # Debugging line
+            return jsonify({'error': 'Error processing locations. Please check the input format.'}), 400
 
         # Compute the distance and time matrices using OSRM
         distance_matrix, time_matrix = compute_distance_matrix_osrm(locations)

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -31,10 +31,15 @@
       </nav>
     </header>
     <div class="content">
+      <img
+        src="{{ url_for('static', filename='images/img-dashboard.png') }}"
+        alt="Dashboard Image"
+        class="cropped-image"
+      />
       <h1>Welcome</h1>
       <p>
         OPTIMIZATION OF VEHICLE ROUTE PROBLEMS WITH TIME WINDOWS IN PICKUP AND
-        DELIVERY HANDLING USING GOOGLE OR-TOOLS
+        DELIVERY HANDLING USING OPENSTREETMAP
       </p>
       <div class="buttons">
         <button class="about-btn" onclick="location.href='/about'">
@@ -64,4 +69,113 @@
         .openPopup();
     </script>
   </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>VRP SOLVER</title>
+
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="static/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="static/css/fontAwesome.css" />
+    <link rel="stylesheet" href="static/css/light-box.css" />
+    <link rel="stylesheet" href="static/css/templatemo-style.css" />
+    <link rel="stylesheet" href="static/style.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900"
+      rel="stylesheet"
+    />
+
+    <script src="static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="/">VRP<em>SOLVER</em></a>
+      </div>
+      <div class="menu-icon">
+        <span></span>
+      </div>
+    </nav>
+    <div id="video-container">
+      <div class="video-overlay"></div>
+      <div class="video-content">
+        <div class="inner">
+          <h1>Welcome to <em>VRP SOLVER</em></h1>
+          <p>
+            Implementasi OpenStreetMap dalam Optimasi Rute Pengantaran Distribusi Logistik untuk Meningkatkan Efisiensi Operasional
+          </p> <br></br>
+          <!-- <p>by Rifqi Fathurrohman npm 1204076</p> -->
+          <div class="buttons">
+            <button class="about-btn" onclick="location.href='/about'">
+              About Us
+            </button>
+            <button class="solve-btn" onclick="location.href='/solve'">
+              Solve Now
+            </button>
+          </div>
+        </div>
+      </div>
+      <img
+        src="{{ url_for('static', filename='images/img-transformed.webp') }}"
+        alt="Dashboard Image"
+        class="cropped-image"
+      />
+    </div>
+
+    <section class="overlay-menu">
+      <div class="container">
+        <div class="row">
+          <div class="main-menu">
+            <ul>
+              <li>
+                <a
+                  href="https://or-tools.github.io/docs/pdoc/ortools.html"
+                  target="_blank"
+                  >OR-Tools Documentation</a
+                >
+              </li>
+              <li>
+                <a href="https://www.openstreetmap.org" target="_blank"
+                  >OpenStreetMap</a
+                >
+              </li>
+              <li>
+                <a href="/templates/about.html">About Us</a>
+              </li>
+            </ul>
+            <p>Vrp solver for your problem route operational distribution.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      window.jQuery ||
+        document.write(
+          '<script src="static/js-idx/vendor/jquery-1.11.2.min.js"><\/script>'
+        );
+    </script>
+
+    <script src="static/js-idx/vendor/bootstrap.min.js"></script>
+
+    <script src="static/js-idx/plugins.js"></script>
+    <script src="static/js-idx/main.js"></script>
+  </body>
+  <footer>
+    <div class="container-fluid">
+      <div class="col-md-12">
+        <p>Copyright &copy; 2024 VRP SOLVER APP | 1204076 Final Report</p>
+      </div>
+    </div>
+  </footer>
 </html>

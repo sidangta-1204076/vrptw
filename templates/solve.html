@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>VRPTW Solver</title>
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
@@ -15,10 +16,9 @@
   </head>
   <body>
     <header>
-      <img
-        src="{{ url_for('static', filename='images/logo_vrptw.png') }}"
-        alt="VRPTW Logo"
-      />
+      <div class="logo">
+        <a href="/">VRP<em>SOLVER</em></a>
+      </div>
       <nav>
         <a href="/">Home</a>
         <a
@@ -141,14 +141,16 @@
 
                 // Add markers for each location with labels
                 var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                var bounds = [];
                 if (locations) {
                   locations.forEach((loc, index) => {
-                    L.marker([loc[0], loc[1]])
+                    var marker = L.marker([loc[0], loc[1]])
                       .bindTooltip(labels[index], {
                         permanent: true,
                         direction: "right",
                       })
                       .addTo(jos);
+                    bounds.push([loc[0], loc[1]]);
                   });
                 } else {
                   console.error("No locations data received");
@@ -159,34 +161,51 @@
                   var polyline = L.polyline(route, { color: "blue" }).addTo(
                     jos
                   );
-                  jos.fitBounds(polyline.getBounds());
+                  bounds.push(...route);
                 } else {
                   console.error("No route data received");
+                }
+
+                // Fit map bounds to markers and route
+                if (bounds.length > 0) {
+                  jos.fitBounds(bounds);
                 }
 
                 // Display route details
                 var detailsDiv = document.getElementById("details");
                 detailsDiv.innerHTML = "<h2>Route Details</h2>";
                 if (routeDetails && routeDetails.length > 0) {
-                  var detailsList = "<ul>";
+                  var detailsTable = `<table>
+                                <tr>
+                                  <th>From</th>
+                                  <th>To</th>
+                                  <th>Distance (km)</th>
+                                  <th>Duration</th>
+                                  <th>Fuel Consumption (liters)</th>
+                                </tr>`;
                   routeDetails.forEach((detail) => {
-                    detailsList += `<li>From ${detail.from} to ${detail.to}: 
-                    ${detail.distance.toFixed(2)} km, 
-                    ${convertMinutesToHoursAndMinutes(detail.duration)}, 
-                    ${detail.fuel_consumption.toFixed(2)} liters</li>`;
+                    detailsTable += `<tr>
+                              <td>${detail.from}</td>
+                              <td>${detail.to}</td>
+                              <td>${detail.distance.toFixed(2)}</td>
+                              <td>${convertMinutesToHoursAndMinutes(
+                                detail.duration
+                              )}</td>
+                              <td>${detail.fuel_consumption.toFixed(2)}</td>
+                            </tr>`;
                   });
-                  detailsList += "</ul>";
-                  detailsList += `<h2>Total</h2>`;
-                  detailsList += `<h3>Total Distance: ${totalDistance.toFixed(
+                  detailsTable += `</table>`;
+                  detailsTable += `<h3>Total</h3>`;
+                  detailsTable += `<p><strong>Total Distance:</strong> ${totalDistance.toFixed(
                     2
-                  )} km</h3>`;
-                  detailsList += `<h3>Total Duration: ${convertMinutesToHoursAndMinutes(
+                  )} km</p>`;
+                  detailsTable += `<p><strong>Total Duration:</strong> ${convertMinutesToHoursAndMinutes(
                     totalDuration
-                  )}</h3>`;
-                  detailsList += `<h3>Total Fuel Consumh3tion: ${totalFuelConsumption.toFixed(
+                  )}</p>`;
+                  detailsTable += `<p><strong>Total Fuel Consumption:</strong> ${totalFuelConsumption.toFixed(
                     2
                   )} liters</p>`;
-                  detailsDiv.innerHTML += detailsList;
+                  detailsDiv.innerHTML += detailsTable;
                 } else {
                   detailsDiv.innerHTML += "<p>No route details available.</p>";
                 }
